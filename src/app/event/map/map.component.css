@@ -1,0 +1,26 @@
+agm-map{
+  height: 520px;
+  }
+
+agm-info-window{
+  height: 100px;
+}
+.example-margin {
+  margin: 10px;
+}
+
+agm-marker{
+  width: 10px;
+  height: 10px;
+}
+
+
+.spacer {
+  margin-left: 200px;
+  flex: 50px;
+}
+
+.findMeBtn{
+  padding: 0;
+  margin: 0;
+}

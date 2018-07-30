@@ -1,0 +1,11 @@
+main {
+  width: 80%;
+  margin: 1rem auto;
+}
+
+.myClass {
+background-image: url('https://www.planwallpaper.com/static/images/Alien_Ink_2560X1600_Abstract_Background_1.jpg');
+background-size: cover;
+height: 100vh;
+width: 100vw;
+}

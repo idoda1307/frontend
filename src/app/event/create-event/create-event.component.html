@@ -1,0 +1,27 @@
+  <mat-card>
+     <mat-spinner *ngIf="isLoading"> </mat-spinner>
+    <form [formGroup]="form" (submit)="onAddEvent()" *ngIf="!isLoading">
+      <mat-form-field>
+        <input matInput
+        type="text"
+        formControlName="title"
+        placeholder="Event Title">
+        <mat-error *ngIf="form.get('title').invalid">Please enter an event title.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+      <input type="text" matInput rows="4" placeholder="Event Description" formControlName="description">
+      <mat-error *ngIf="form.get('description').invalid">Please enter an event description.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input type="datetime-local" matInput placeholder="Event Start Date" formControlName="startDate">
+        <mat-error *ngIf="form.get('startDate').invalid">Please enter an event start date.</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input type="datetime-local" matInput placeholder="Event End Date" formControlName="endDate">
+          <mat-error *ngIf="form.get('endDate').invalid">Please enter an event end date.</mat-error>
+          </mat-form-field>
+    <br/>
+    <br/>
+      <button mat-stroked-button color="primary" type="submit"> {{btnName}} </button>
+    </form>
+  </mat-card>

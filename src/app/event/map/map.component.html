@@ -1,0 +1,25 @@
+
+<div class="form-group">
+  <app-radius (radiusChanged)="showAllEventsInRadius($event)"></app-radius>
+  <span class="spacer"></span>
+  <button class="findMeBtn" mat-stroked-button color="warn" (click)="getUserLocation()">Find Me</button>
+  <span class="spacer"></span>
+    <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
+</div>
+<agm-map [latitude]="location.lat" [longitude]="location.lng" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClicked($event)">
+  <agm-marker [latitude]="location.lat" [longitude]="location.lng"  (markerClick)="openCreateEvent()">
+  </agm-marker>
+  <agm-marker *ngFor="let m of filteredMarkers; let i = index" [iconUrl]="userId===m.creator? 'https://maps.google.com/mapfiles/marker_yellow.png'
+  : 'https://maps.google.com/mapfiles/ms/icons/blue.png'" [latitude]="m.location.lat" [longitude]="m.location.lng">
+    <agm-info-window>
+      <h3><strong>{{m.title}}</strong></h3>
+      <div>description: {{m.description}}</div>
+      <div>Start Date: {{m.dateStarted}}</div>
+      <div>End Date: {{m.dateEnded}}</div>
+      <button *ngIf="userId!==m.creator" mat-button color="warn" (click)="joinToEvent(m)">Join To Event</button>
+    </agm-info-window>
+  </agm-marker>
+  <agm-circle [latitude]="location.lat" [longitude]="location.lng" [radius]="radius" [fillColor]="'red'" [circleDraggable]="false"
+    [editable]="false">
+  </agm-circle>
+</agm-map>
