@@ -150,6 +150,15 @@ guests: string[]) {
     });
 }
 
+updateEventGuests(id: string, guests: string[]) {
+  this.http
+  .put(
+   // 'https://arcane-gorge-90547.herokuapp.com/api/event/updateGuests/'
+    'http://localhost:3000/api/event/updateGuests/' + id, guests).subscribe(response => {
+      console.log(response);
+    });
+}
+
 deleteEvent(eventId: string) {
   return this.http.delete('https://arcane-gorge-90547.herokuapp.com/api/event/' + eventId);
 }

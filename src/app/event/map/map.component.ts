@@ -154,14 +154,12 @@ event.guests = [];
     }
     if (event.guests.length === 0) {
     event.guests.push(this.authService.getUserId());
-    this.eventssService.updateEvent(event.id, event.title, event.description, event.location, event.dateStarted, event.dateEnded,
-      event.guests);
+    this.eventssService.updateEventGuests(event.id, event.guests);
     } else if (event.guests.find(u => u === this.authService.getUserId())) {
       this.dialog.open(ErrorComponent, { width: '300px', data: {message: 'you are already registered to this event' }});
     } else {
         event.guests.push(this.authService.getUserId());
-        this.eventssService.updateEvent(event.id, event.title, event.description, event.location, event.dateStarted, event.dateEnded,
-          event.guests);
+        this.eventssService.updateEventGuests(event.id, event.guests);
    }
   }
 }
