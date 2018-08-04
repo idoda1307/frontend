@@ -1,4 +1,3 @@
-
 <div class="form-group">
   <app-radius (radiusChanged)="showAllEventsInRadius($event)"></app-radius>
   <span class="spacer"></span>
@@ -14,9 +13,13 @@
     <agm-info-window>
       <h3><strong>{{m.title}}</strong></h3>
       <div>description: {{m.description}}</div>
-      <div>Start Date: {{m.dateStarted}}</div>
-      <div>End Date: {{m.dateEnded}}</div>
-      <button *ngIf="userId!==m.creator" mat-button color="warn" (click)="joinToEvent(m)">Join To Event</button>
+      <div>Start Date: {{m.startDate}}</div>
+      <div>End Date: {{m.endDate}}</div>
+      <div *ngIf="m.guests!==null">Number of Guests: {{m.guests.length}}</div>
+      <div class="event-image">
+        <img [src]="m.imagePath" [alt]="m.title">
+      </div>
+      <button *ngIf="userId!=m.creator" mat-button color="warn" (click)="joinToEvent(m)">Join To Event</button>
     </agm-info-window>
   </agm-marker>
   <agm-circle [latitude]="location.lat" [longitude]="location.lng" [radius]="radius" [fillColor]="'red'" [circleDraggable]="false"

@@ -7,10 +7,12 @@ import { Location } from '../models/location.model';
 import { Marker } from '../models/marker.model';
 import { MyAuthService } from '../../auth/auth.service';
 
+const BACKEND_URL = 'http://localhost:3000/api/event/';
+// 'https://arcane-gorge-90547.herokuapp.com/api/event/';
+
 @Injectable({ providedIn: 'root' })
 export class EventsService {
   marker: Marker;
-  oldMarker: Marker;
   private events: Marker[] = [];
   private newEvent = new Subject<any>();
   private eventUpdated = new Subject<{events: Marker[], eventsCount: number}>();
@@ -19,11 +21,19 @@ export class EventsService {
 
  constructor(private http: HttpClient, private router: Router, private authService: MyAuthService) {}
 
- addEvent(title: string, description: string, location: Location, dateStarted: Date, dateEnded: Date) {
-const event: Marker = {id: null, location: location , title: title,
-   description: description, creator: this.authService.getUserId(), dateStarted: dateStarted, dateEnded: dateEnded, guests: null};
+ addEvent(event: Marker, image: File) {
+   const eventData = new FormData();
+   eventData.append('title', event.title);
+   eventData.append('description', event.description);
+   eventData.append('creator', event.creator);
+   eventData.append('startDate', event.startDate.toLocaleString());
+eventData.append('endDate', event.endDate.toLocaleString());
+eventData.append('lat', event.location.lat.toString());
+eventData.append('lng', event.location.lng.toString());
+eventData.append('image', image, event.title);
+eventData.append('guests', null);
   this.http
-    .post<{ message: string; eventId: string }>('https://arcane-gorge-90547.herokuapp.com/api/event/createevent', event)
+    .post<{ message: string; eventId: string }>(BACKEND_URL, eventData)
     .subscribe(responseData => {
       const id = responseData.eventId;
       event.id = id;
@@ -34,40 +44,15 @@ const event: Marker = {id: null, location: location , title: title,
 
 getEvent(id: string) {
 return this.http.get<{_id: string; lat: number; lng: number; title: string; description: string; creator: string,
-   dateStarted: Date, dateEnded: Date, guests: string[]}>(
-  'https://arcane-gorge-90547.herokuapp.com/api/event/' + id
+   startDate: Date, endDate: Date, guests: string[], imagePath: string}>(
+  BACKEND_URL + id
 );
-}
-
-getUserEvents() {
-  this.http
-  .get<{ message: string; events: any }>('https://arcane-gorge-90547.herokuapp.com/api/event/userevents')
-  .pipe(
-    map(eventData => {
-      return eventData.events.map(event => {
-        return {
-          location: {lat: event.lat, lng: event.lng},
-          title: event.title,
-          description: event.description,
-          id: event._id,
-          creator: event.creator,
-          dateStarted: event.dateStarted,
-          dateEnded: event.dateEnded,
-          guests: event.guests
-        };
-      });
-    })
-  )
-  .subscribe(transformedEvents => {
-    this.events = transformedEvents;
-    this.newEvent.next([...this.events]);
-  });
 }
 
 getEventsList(eventsPerPage: number, currentPage: number) {
   const queryParams = `?pagesize=${eventsPerPage}&page=${currentPage}`;
   this.http
-    .get<{ message: string; events: any, maxEvents: number }>('https://arcane-gorge-90547.herokuapp.com/api/event/eventslist' + queryParams)
+    .get<{ message: string; events: any, maxEvents: number }>(BACKEND_URL + 'eventslist' + queryParams)
     .pipe(
       map(eventData => {
         console.log(eventData.message);
@@ -79,9 +64,10 @@ getEventsList(eventsPerPage: number, currentPage: number) {
             description: event.description,
             id: event._id,
             creator: event.creator,
-            dateStarted: event.startDate,
-            dateEnded: event.endDate,
-            guests: event.guests
+            startDate: event.startDate,
+            endDate: event.endDate,
+            guests: event.guests,
+            imagePath: event.imagePath
           };
         }), maxEvents: eventData.maxEvents
       };
@@ -95,7 +81,7 @@ getEventsList(eventsPerPage: number, currentPage: number) {
 
 getEvents() {
   this.http
-    .get<{ message: string; events: any }>('https://arcane-gorge-90547.herokuapp.com/api/event')
+    .get<{ message: string; events: any }>(BACKEND_URL)
     .pipe(
       map(eventData => {
         console.log(eventData.message);
@@ -107,9 +93,10 @@ getEvents() {
             description: event.description,
             id: event._id,
             creator: event.creator,
-            dateStarted: event.startDate,
-            dateEnded: event.endDate,
-            guests: event.guests
+            startDate: event.startDate,
+            endDate: event.endDate,
+            guests: event.guests,
+            imagePath: event.imagePath
           };
         })
       };
@@ -129,36 +116,53 @@ getEventUpdateListener() {
   return this.newEvent.asObservable();
 }
 
-updateEvent(id: string, title: string, description: string, location: Location, dateStarted: Date, dateEnded: Date,
-guests: string[]) {
-
-  const eventData = {
-      id: id,
-      title: title,
-      description: description,
-      location: location,
-      creator: this.oldMarker.creator,
-      dateStarted: dateStarted,
-      dateEnded: dateEnded,
-      guests: guests
-    };
+updateEvent(event: Marker , image: File, eventId: string) {
+let eventData: FormData | Marker;
+if (typeof image === 'object') {
+  eventData = new FormData();
+  eventData.append('id', eventId);
+  eventData.append('title', event.title);
+  eventData.append('description', event.description);
+  eventData.append('creator', event.creator);
+  eventData.append('startDate', event.startDate.toLocaleString());
+eventData.append('endDate', event.endDate.toLocaleString());
+eventData.append('lat', event.location.lat.toString());
+eventData.append('lng', event.location.lng.toString());
+eventData.append('image', image, event.title);
+if (event.guests != null) {
+eventData.append('guests', event.guests.toString());
+} else {
+  eventData.append('guests', null);
+}
+} else {
+  eventData = {
+    id: eventId,
+    title: event.title,
+    description: event.description,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    creator: event.creator,
+    location: event.location,
+    imagePath: event.imagePath
+  };
+}
     this.http
     .put(
-      'https://arcane-gorge-90547.herokuapp.com/api/event/' + id, eventData)
+      BACKEND_URL + eventId, eventData)
     .subscribe(response => {
       console.log(response);
     });
 }
 
-updateEventGuests(id: string, guests: string[]) {
+updateEventGuests(id: string, guest: string) {
   this.http
   .put(
-   'https://arcane-gorge-90547.herokuapp.com/api/event/updateGuests/' + id, guests).subscribe(response => {
+  BACKEND_URL + 'updateGuests/' + id, guest).subscribe(response => {
       console.log(response);
     });
 }
 
 deleteEvent(eventId: string) {
-  return this.http.delete('https://arcane-gorge-90547.herokuapp.com/api/event/' + eventId);
+  return this.http.delete(BACKEND_URL + eventId);
 }
 }

@@ -63,7 +63,7 @@ this.eventsService.getEventsList(this.eventsPerPage, this.currentPage);
     this.mode = 'edit';
     const dialogRef = this.dialog.open(CreateEventComponent, {
       width: '400px',
-      data: { mode: this.mode, location: event.location, eventId: event.id}
+      data: { mode: this.mode, event: event, eventId: event.id}
     });
     dialogRef.afterClosed().subscribe(result => {
      this.showUpdatedItem(result);
@@ -77,9 +77,10 @@ this.eventsService.getEventsList(this.eventsPerPage, this.currentPage);
     this.events[index].title = newItem.title;
     this.events[index].creator = newItem.creator;
     this.events[index].id = newItem.id;
-    this.events[index].dateStarted = newItem.dateStarted;
-    this.events[index].dateEnded = newItem.dateEnded;
+    this.events[index].startDate = newItem.startDate;
+    this.events[index].endDate = newItem.endDate;
     this.events[index].guests = newItem.guests;
+    this.events[index].imagePath = newItem.imagePath;
   }
 
   findIndexToUpdate(newItem) {

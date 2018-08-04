@@ -12,6 +12,13 @@
       <input type="text" matInput rows="4" placeholder="Event Description" formControlName="description">
       <mat-error *ngIf="form.get('description').invalid">Please enter an event description.</mat-error>
       </mat-form-field>
+      <div>
+        <button mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
+        <input type="file" #filePicker (change)="onImagePicked($event)">
+      </div>
+      <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
+        <img [src]="imagePreview" [alt]="form.value.title">
+      </div>
       <mat-form-field>
         <input type="datetime-local" matInput placeholder="Event Start Date" formControlName="startDate">
         <mat-error *ngIf="form.get('startDate').invalid">Please enter an event start date.</mat-error>

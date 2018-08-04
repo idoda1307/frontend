@@ -8,6 +8,7 @@ import { MyAuthService } from '../../auth/auth.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ErrorComponent } from '../../error/error.component';
 import { NotificationsService } from '../services/notifications.service';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-create-event',
@@ -17,10 +18,10 @@ import { NotificationsService } from '../services/notifications.service';
 export class CreateEventComponent implements OnInit, OnDestroy {
   @Input() location: Location;
   marker: Marker;
-  oldMarker: Marker;
   isLoading = false;
   form: FormGroup;
   mode: string;
+  imagePreview: string;
   private eventId: string;
   private authStatusSub: Subscription;
   private eventsSub: Subscription;
@@ -33,7 +34,7 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     private notificationService: NotificationsService,
     public dialogRef: MatDialogRef<CreateEventComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { location: Location; eventId: string; mode: string }
+    public data: { location: Location; eventId: string; mode: string, event: Marker }
   ) {}
 
   ngOnInit() {
@@ -41,6 +42,27 @@ export class CreateEventComponent implements OnInit, OnDestroy {
       this.btnName = 'Add Event';
     } else {
       this.btnName = 'Update Event';
+      this.eventssService.getEvent(this.data.eventId).subscribe(eventData => {
+        this.isLoading = false;
+        this.marker = {
+          id: eventData._id,
+          title: eventData.title,
+          description: eventData.description,
+          startDate: eventData.startDate,
+          endDate: eventData.endDate,
+          location: {lat: eventData.lat, lng: eventData.lng},
+          creator: eventData.creator,
+          guests: eventData.guests,
+          imagePath: eventData.imagePath
+        };
+        this.form.setValue({
+        title: this.marker.title,
+        description: this.marker.description,
+        startDate: this.marker.startDate,
+        endDate: this.marker.endDate,
+        image: this.marker.imagePath
+            });
+        });
     }
     this.notificationService.subscribeToNotifications();
     this.authStatusSub = this.authService
@@ -55,7 +77,11 @@ export class CreateEventComponent implements OnInit, OnDestroy {
       }),
       description: new FormControl(null, { validators: [Validators.required] }),
       startDate: new FormControl(null, { validators: [Validators.required] }),
-      endDate: new FormControl(null, { validators: [Validators.required] })
+      endDate: new FormControl(null, { validators: [Validators.required] }),
+      image: new FormControl(null, {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
+      })
     });
   }
 
@@ -66,36 +92,41 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     } else if (this.form.invalid) {
         return;
       } else if (this.data.mode === 'create') {
-       this.eventssService.addEvent(this.form.value.title, this.form.value.description, this.data.location, this.form.value.startDate,
-         this.form.value.endDate);
-      this.marker = {id: null, title: this.form.value.title, description: this.form.value.description, location: this.data.location,
-        creator: this.authService.getUserId(), dateStarted: this.form.value.startDate, dateEnded: this.form.value.endDate, guests: null};
-        this.notificationService.sendNotifications(this.marker);
+        this.marker = {id: null, title: this.form.value.title, description: this.form.value.description, location: this.data.location,
+          creator: this.authService.getUserId(), startDate: this.form.value.startDate, endDate: this.form.value.endDate, guests: null,
+        imagePath: this.form.value.image};
+       this.eventssService.addEvent(this.marker, this.form.value.image);
+             this.notificationService.sendNotifications(this.marker);
+             this.isLoading = true;
       this.dialogRef.close(this.marker);
     } else if (this.data.mode === 'edit') {
-      this.eventssService.updateEvent(this.data.eventId, this.form.value.title, this.form.value.description, this.data.location,
-        this.form.value.startDate, this.form.value.endDate, null);
-        this.eventssService.getEvent(this.data.eventId);
-        this.eventssService.getEvents();
-    this.eventsSub = this.eventssService
-      .getEventUpdateListener()
-      .subscribe((event: Marker) => {
-        this.isLoading = false;
-       this.oldMarker = event;
-      });
       this.marker = {
         id: this.data.eventId,
         title: this.form.value.title,
         description: this.form.value.description,
-        location: this.data.location,
+        location: this.data.event.location,
         creator: this.authService.getUserId(),
-        dateStarted: this.form.value.startDate,
-        dateEnded: this.form.value.endDate,
-        guests: this.oldMarker.guests
+        startDate: this.form.value.startDate,
+        endDate: this.form.value.endDate,
+        guests: this.data.event.guests,
+        imagePath: this.form.value.image
       };
+      this.eventssService.updateEvent(this.marker, this.form.value.image , this.data.eventId);
+      this.isLoading = true;
       this.dialogRef.close(this.marker);
     }
     this.form.reset();
+  }
+
+  onImagePicked(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({ image: file });
+    this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   ngOnDestroy() {

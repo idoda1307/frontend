@@ -1,12 +1,15 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <mat-accordion multi="true" *ngIf="events.length > 0 && !isLoading">
   <mat-expansion-panel *ngFor="let event of events">
-    <mat-expansion-panel-header [ngStyle]="{'font-size': userId==event.creator? '30px' : '15px'} ">
+    <mat-expansion-panel-header [ngStyle]="{'color': userId==event.creator? 'blue' : 'red'} ">
       {{ event.title }}
     </mat-expansion-panel-header>
     <p>Description: {{ event.description }}</p>
-    <p>Start Date: {{event.dateStarted}}</p>
-    <p>End Date: {{event.dateEnded}}</p>
+    <p>Start Date: {{event.startDate}}</p>
+    <p>End Date: {{event.endDate}}</p>
+    <p class="event-image">
+      <img [src]="event.imagePath" [alt]="event.title">
+    </p>
   <h3>Guests: </h3>
     <div *ngFor="let guest of event.guests">
       <div>

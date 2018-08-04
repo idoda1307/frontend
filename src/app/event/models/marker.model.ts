@@ -6,7 +6,8 @@ export interface Marker {
    title: string;
    description: string;
    creator: string;
-   dateStarted: Date;
-   dateEnded: Date;
-   guests: string[];
+   startDate: Date;
+   endDate: Date;
+   guests?: string[];
+   imagePath: string;
 }

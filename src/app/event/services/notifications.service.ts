@@ -3,6 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { Marker } from '../models/marker.model';
 
+const BACKEND_URL = 'http://localhost:3000/api/notification/';
+// 'https://arcane-gorge-90547.herokuapp.com/api/notification/';
+
 @Injectable()
 export class NotificationsService {
     constructor(private http: HttpClient, private swPush: SwPush) {}
@@ -10,11 +13,11 @@ export class NotificationsService {
     readonly VAPID_PUBLIC_KEY = 'BFsjeYO7F2jfDBJYF8fhGGWK1knggiFN8uxEpslVLgBw5i5VNQlPan7s-jNw-NAR4L-DQo0_YWZfov1EkCxbyHI';
 
      addPushSubscriber(sub: any) {
-         return this.http.post('https://arcane-gorge-90547.herokuapp.com/api/notification/add', sub);
+         return this.http.post(BACKEND_URL + 'add', sub);
      }
 
      send(event: Marker) {
-      return this.http.post<{ message: string; title: string }>('https://arcane-gorge-90547.herokuapp.com/api/notification/send', event)
+      return this.http.post<{ message: string; title: string }>(BACKEND_URL + 'send', event)
       .subscribe();
   }
 

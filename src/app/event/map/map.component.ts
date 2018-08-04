@@ -115,8 +115,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   pushNewEvent($event) {
     const newMarker: Marker = {location: { lat: $event.location.lat, lng: $event.location.lng }, title: $event.title,
-      description: $event.description, id: null, creator: this.authService.getUserId(), dateStarted: $event.dateStarted,
-      dateEnded: $event.dateEnded, guests: null};
+      description: $event.description, id: null, creator: this.authService.getUserId(), startDate: $event.startDate,
+      endDate: $event.endDate, guests: null, imagePath: $event.imagePath};
     this.markers.push(newMarker);
     this.showAllEventsInRadius(this.radius);
   }
@@ -127,6 +127,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   showAllEventsInRadius($event: number) {
+    this.radius = $event;
     this.mapsAPILoader.load().then(() => {
       const center = new google.maps.LatLng(this.location.lat, this.location.lng);
       this.filteredMarkers = this.markers.filter(m => {
@@ -149,17 +150,18 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   joinToEvent(event: Marker) {
+    const guest = this.authService.getUserId();
      if (event.guests == null) {
 event.guests = [];
     }
     if (event.guests.length === 0) {
-    event.guests.push(this.authService.getUserId());
-    this.eventssService.updateEventGuests(event.id, event.guests);
-    } else if (event.guests.find(u => u === this.authService.getUserId())) {
+    event.guests.push(guest);
+    this.eventssService.updateEventGuests(event.id, guest);
+    } else if (event.guests.find(u => u === guest)) {
       this.dialog.open(ErrorComponent, { width: '300px', data: {message: 'you are already registered to this event' }});
     } else {
-        event.guests.push(this.authService.getUserId());
-        this.eventssService.updateEventGuests(event.id, event.guests);
+        event.guests.push(guest);
+        this.eventssService.updateEventGuests(event.id, guest);
    }
   }
 }

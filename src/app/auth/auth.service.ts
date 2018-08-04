@@ -4,6 +4,9 @@ import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
+const BACKEND_URL = 'http://localhost:3000/api/user/';
+// 'https://arcane-gorge-90547.herokuapp.com/api/user/';
+
 @Injectable({ providedIn: 'root' })
 export class MyAuthService {
   private token: string;
@@ -33,7 +36,7 @@ export class MyAuthService {
   createUser( email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
     this.http.post<{ token: string, expiresIn: number, userId: string}>
-    ('https://arcane-gorge-90547.herokuapp.com/api/user/signup', authData)
+    (BACKEND_URL + 'signup', authData)
     .subscribe(response => {
       const token = response.token;
         this.token = token;
@@ -59,7 +62,7 @@ export class MyAuthService {
   login(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
     this.http.post<{token: string, expiresIn: number, userId: string}>
-    ('https://arcane-gorge-90547.herokuapp.com/api/user/login', authData)
+    (BACKEND_URL + 'login', authData)
       .subscribe(response => {
         const token = response.token;
         this.token = token;
