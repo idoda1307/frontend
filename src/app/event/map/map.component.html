@@ -13,12 +13,10 @@
     <agm-info-window>
       <h3><strong>{{m.title}}</strong></h3>
       <div>description: {{m.description}}</div>
-      <div>Start Date: {{m.startDate}}</div>
-      <div>End Date: {{m.endDate}}</div>
+      <div>Start Date: {{m.startDate | date:'medium'}}</div>
+      <div>End Date: {{m.endDate | date:'medium'}}</div>
       <div *ngIf="m.guests!==null">Number of Guests: {{m.guests.length}}</div>
-      <div class="event-image">
-        <img [src]="m.imagePath" [alt]="m.title">
-      </div>
+      <button *ngIf="userId===m.creator" mat-button color="warn" (click)="onEdit(m)">EDIT</button>
       <button *ngIf="userId!=m.creator" mat-button color="warn" (click)="joinToEvent(m)">Join To Event</button>
     </agm-info-window>
   </agm-marker>

@@ -59,33 +59,6 @@ this.eventsService.getEventsList(this.eventsPerPage, this.currentPage);
     });
    }
 
-   openCreateEvent(event: Marker) {
-    this.mode = 'edit';
-    const dialogRef = this.dialog.open(CreateEventComponent, {
-      width: '400px',
-      data: { mode: this.mode, event: event, eventId: event.id}
-    });
-    dialogRef.afterClosed().subscribe(result => {
-     this.showUpdatedItem(result);
-    });
-  }
-
-  showUpdatedItem(newItem: Marker) {
-    const updateItem = this.events.find(this.findIndexToUpdate, newItem.id);
-    const index = this.events.indexOf(updateItem);
-    this.events[index].description = newItem.description;
-    this.events[index].title = newItem.title;
-    this.events[index].creator = newItem.creator;
-    this.events[index].id = newItem.id;
-    this.events[index].startDate = newItem.startDate;
-    this.events[index].endDate = newItem.endDate;
-    this.events[index].guests = newItem.guests;
-    this.events[index].imagePath = newItem.imagePath;
-  }
-
-  findIndexToUpdate(newItem) {
-        return newItem.id === this;
-  }
 
   ngOnDestroy() {
     this.eventsSub.unsubscribe();

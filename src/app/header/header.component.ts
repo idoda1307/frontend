@@ -9,6 +9,7 @@ import {Subscription} from 'rxjs';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 userIsAuthenticated = false;
+userName: string;
 private authListenerSubs: Subscription;
   constructor(private authService: MyAuthService) {}
 

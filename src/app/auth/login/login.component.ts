@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 import {MyAuthService} from '../auth.service';
 import { Subscription } from 'rxjs';
 
-
 @Component ({
 selector: 'app-login',
 templateUrl: './login.component.html',
@@ -34,6 +33,5 @@ return;
 }
 this.isLoading = true;
 this.authService.login(form.value.email, form.value.password);
-
   }
 }

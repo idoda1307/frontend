@@ -149,6 +149,35 @@ export class MapComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {this.pushNewEvent(result); });
   }
 
+  onEdit(event: Marker) {
+    this.mode = 'edit';
+    const dialogRef = this.dialog.open(CreateEventComponent, {
+      width: '400px',
+      data: { mode: this.mode, event: event, eventId: event.id}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+     this.showUpdatedItem(result);
+    });
+  }
+
+  showUpdatedItem(newItem: Marker) {
+    const updateItem = this.markers.find(this.findIndexToUpdate, newItem.id);
+    const index = this.markers.indexOf(updateItem);
+    this.markers[index].description = newItem.description;
+    this.markers[index].title = newItem.title;
+    this.markers[index].creator = newItem.creator;
+    this.markers[index].id = newItem.id;
+    this.markers[index].startDate = newItem.startDate;
+    this.markers[index].endDate = newItem.endDate;
+    this.markers[index].guests = newItem.guests;
+    this.markers[index].imagePath = newItem.imagePath;
+  }
+
+
+  findIndexToUpdate(newItem) {
+    return newItem.id === this;
+}
+
   joinToEvent(event: Marker) {
     const guest = this.authService.getUserId();
      if (event.guests == null) {

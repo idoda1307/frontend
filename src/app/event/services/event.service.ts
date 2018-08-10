@@ -7,7 +7,7 @@ import { Location } from '../models/location.model';
 import { Marker } from '../models/marker.model';
 import { MyAuthService } from '../../auth/auth.service';
 
-const BACKEND_URL = 'http://localhost:3000/api/event/';
+const BACKEND_URL =  'http://localhost:3000/api/event/';
 // 'https://arcane-gorge-90547.herokuapp.com/api/event/';
 
 @Injectable({ providedIn: 'root' })
