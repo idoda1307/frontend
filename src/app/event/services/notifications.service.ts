@@ -3,8 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { Marker } from '../models/marker.model';
 
-const BACKEND_URL =  'http://localhost:3000/api/notification/';
- // 'https://arcane-gorge-90547.herokuapp.com/api/notification/';
+const BACKEND_URL = // 'http://localhost:3000/api/notification/';
+  'https://arcane-gorge-90547.herokuapp.com/api/notification/';
 
 @Injectable()
 export class NotificationsService {

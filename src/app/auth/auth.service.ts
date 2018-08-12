@@ -4,8 +4,8 @@ import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
-const BACKEND_URL =  'http://localhost:3000/api/user/';
-// 'https://arcane-gorge-90547.herokuapp.com/api/user/';
+const BACKEND_URL = // 'http://localhost:3000/api/user/';
+ 'https://arcane-gorge-90547.herokuapp.com/api/user/';
 
 @Injectable({ providedIn: 'root' })
 export class MyAuthService {

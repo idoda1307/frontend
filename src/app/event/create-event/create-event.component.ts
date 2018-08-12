@@ -70,7 +70,6 @@ export class CreateEventComponent implements OnInit, OnDestroy {
       .subscribe(authStatus => {
         this.isLoading = false;
       });
-    this.eventId = null;
     this.form = this.fb.group({
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
@@ -96,8 +95,8 @@ export class CreateEventComponent implements OnInit, OnDestroy {
           creator: this.authService.getUserId(), startDate: this.form.value.startDate, endDate: this.form.value.endDate, guests: null,
         imagePath: this.form.value.image};
        this.eventssService.addEvent(this.marker, this.form.value.image);
-             this.notificationService.sendNotifications(this.marker);
-             this.isLoading = true;
+      this.notificationService.sendNotifications(this.marker);
+     // this.isLoading = true;
       this.dialogRef.close(this.marker);
     } else if (this.data.mode === 'edit') {
       this.marker = {
